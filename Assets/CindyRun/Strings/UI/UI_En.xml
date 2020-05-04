@@ -1,0 +1,14 @@
+<strings>
+  <string key="Setting">Setting</string>
+  <string key="Language">Language</string>
+  <string key="QualityLevel">Quality Level</string>
+  <string key="Very Low">Very Low</string>
+  <string key="Low">Low</string>
+  <string key="Medium">Medium</string>
+  <string key="High">High</string>
+  <string key="Very High">Very High</string>
+  <string key="Ultra">Ultra</string>
+  <string key="Volume">Volume</string>
+  <string key="MusicVolume">Music</string>
+  <string key="SoundVolume">Sound</string>
+</strings>

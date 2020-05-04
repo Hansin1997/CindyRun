@@ -1,0 +1,8 @@
+Temp/
+Library/
+Packages/
+obj/
+.vs/
+Assets/Cindy/Test/
+*.sln
+*.csproj
