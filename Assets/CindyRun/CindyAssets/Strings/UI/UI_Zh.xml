@@ -1,0 +1,18 @@
+<strings>
+  <string key="Setting">设置</string>
+  <string key="Language">语言</string>
+  <string key="QualityLevel">画质等级</string>
+  <string key="Very Low">最低画质</string>
+  <string key="Low">低画质</string>
+  <string key="Medium">中等画质</string>
+  <string key="High">高画质</string>
+  <string key="Very High">超高画质</string>
+  <string key="Ultra">最高画质</string>
+  <string key="Volume">音量</string>
+  <string key="MusicVolume">音乐</string>
+  <string key="SoundVolume">声效</string>
+
+  <string key="Start">开始</string>
+  <string key="Quit">退出</string>
+  <string key="Message">信息</string>
+</strings>
