@@ -1,9 +1,11 @@
 ﻿using Cindy.Logic.ReferenceValues;
+using Cindy.Util.Serializables;
 using CindyRun.Util;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-namespace CindyRun.Game
+namespace CindyRun.Road
 {
     /// <summary>
     /// 路径生成器
@@ -12,62 +14,79 @@ namespace CindyRun.Game
     {
         public Transform target;
 
+        public ReferenceVector3 v;
+
         public ReferenceFloat distance;
 
         public PathNode[] templates;
+        public bool allowMirrors = true;
+        public PathNode[] Objects;
+        public AnimationCurve function = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
-        public PathNode[] endOfRoads;
+        public EndOfRoad[] endOfRoads;
 
         protected IObjectPool<PathNode> pool;
 
         public IList<PathNode> Nodes { get { return pool.GetActivedInstances(); } }
+
         
         Vector3 o;
 
         Way way = Way.Forward;
 
-        protected PathNode RandomRoadNode
-        {
-            get
-            {
-                float weightSum = 0;
-                float[] map = new float[templates.Length];
-                int i = 0;
-                foreach (PathNode node in templates)
-                {
-                    map[i++] = weightSum;
-                    weightSum += node.weight;
-                }
-                float r = Random.Range(0, weightSum);
-                for (i = 0; i < map.Length - 1; i++)
-                {
-                    if (r >= map[i] && r <= map[i + 1])
-                        return templates[i];
-                }
-                return templates.Length > 0 ? templates[templates.Length - 1] : null;
-            }
-        }
+        SerializedTransform targetOrigin;
 
-        protected PathNode RandomEndOfRoad
+        public ReferenceFloat D;
+
+        protected PathNode RandomRoadNode { get { return RandomNode(templates); } }
+
+        protected EndOfRoad RandomEndOfRoad { get { return RandomNode(endOfRoads); } }
+
+        protected PathNode RandomObjects { get { return RandomNode(Objects); } }
+
+        public UnityEvent resetEvent;
+
+        protected T RandomNode<T>(T[] templates) where T : PathNode
         {
-            get
+            float weightSum = 0;
+            float[] map = new float[templates.Length];
+            int i = 0;
+            foreach (T node in templates)
             {
-                if(endOfRoads.Length > 0)
-                {
-                    return endOfRoads[Random.Range(0, endOfRoads.Length)];
-                }
-                else
-                {
-                    return null;
-                }
+                map[i++] = weightSum;
+                weightSum += node.weight;
             }
+            float r = Random.Range(0, weightSum);
+            for (i = 0; i < map.Length - 1; i++)
+            {
+                if (r >= map[i] && r <= map[i + 1])
+                    return templates[i];
+            }
+            return templates.Length > 0 ? templates[templates.Length - 1] : null;
         }
 
         private void Awake()
         {
             pool = new SimpleObjectPool<PathNode>();
+            targetOrigin = new SerializedTransform(target);
         }
-        
+
+        public void DoReset()
+        {
+            List<PathNode> tmp = new List<PathNode>();
+            foreach(PathNode pathNode in Nodes)
+            {
+                tmp.Add(pathNode);
+            }
+            foreach (PathNode node in tmp)
+                pool.Recycle(node);
+            o = Vector3.zero;
+            way = Way.Forward;
+            targetOrigin.SetTransform(target);
+            D.Value = 0;
+            resetEvent.Invoke();
+        }
+
         public void Generate(int count)
         {
             for (int i = 0; i < count; i++)
@@ -76,12 +95,14 @@ namespace CindyRun.Game
 
         public void Generate()
         {
-            if(Nodes.Count > 0)
+            bool fork = Nodes.Count == 0;
+            if (Nodes.Count > 0)
             {
-                for(int i = Nodes.Count - 1;i >= 0; i--)
+                for (int i = Nodes.Count - 1; i >= 0; i--)
                 {
                     if (Nodes[i] is ForkNode f)
                     {
+                        fork = true;
                         switch (way)
                         {
                             default:
@@ -109,7 +130,23 @@ namespace CindyRun.Game
                         break;
                 }
             }
-            PathNode node = pool.Instantiate(RandomRoadNode, transform);
+            int count = 0;
+            PathNode t = RandomRoadNode;
+            while (fork && t is ForkNode)
+            {
+                t = RandomRoadNode;
+                count++;
+                if (count > templates.Length && count > 2000)
+                {
+                    Debug.LogError("Can't find a road!");
+                    break;
+                }
+            }
+
+            PathNode node = pool.Instantiate(t, transform);
+            if (allowMirrors && Random.Range(0f, 1f) >= 0.5f && !(node is ForkNode))
+                node.transform.localScale = new Vector3(-node.transform.localScale.x, node.transform.localScale.y, node.transform.localScale.z);
+            D.Value += node.height;
             switch (way)
             {
                 default:
@@ -132,6 +169,18 @@ namespace CindyRun.Game
                     node.transform.position = transform.position + o;
                     o += new Vector3(node.height / 2, 0, 0);
                     break;
+            }
+            if(!(node is ForkNode || node is EndOfRoad))
+            {
+                int len = (int)function.Evaluate(D.Value);
+                float unit = node.height / len;
+                for (int i = 0; i < len; i++)
+                {
+                    PathNode ins = pool.Instantiate(RandomObjects, node.transform);
+                    ins.transform.position += node.transform.forward * (-node.height / 2 + i * unit) +
+                        node.transform.right * (-node.width / 2 + Random.Range(0, node.width));
+                    ins.transform.SetParent(transform);
+                }
             }
         }
 
@@ -183,7 +232,7 @@ namespace CindyRun.Game
         private void Update()
         {
             List<PathNode> garbage = new List<PathNode>();
-            for(int i = 0;i < Nodes.Count; i++)
+            for (int i = 0; i < Nodes.Count; i++)
             {
                 if ((Nodes[i].transform.position - target.transform.position).magnitude > distance.value)
                     garbage.Add(Nodes[i]);
@@ -192,8 +241,16 @@ namespace CindyRun.Game
             }
             foreach (PathNode g in garbage)
                 pool.Recycle(g);
+            int c = 0;
             while (Nodes.Count == 0 || (target.transform.position - Nodes[Nodes.Count - 1].transform.position).magnitude <= distance.Value)
+            {
+                c++;
                 Generate();
+                if(c > 2000)
+                {
+                    Debug.LogError("Timeout!");
+                }
+            }
         }
 
         protected enum Way
@@ -202,6 +259,7 @@ namespace CindyRun.Game
             Right,
             Left
         }
+        
     }
 
 }

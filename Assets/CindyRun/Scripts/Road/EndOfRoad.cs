@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CindyRun.Game
+namespace CindyRun.Road
 {
     public class EndOfRoad : PathNode
     {

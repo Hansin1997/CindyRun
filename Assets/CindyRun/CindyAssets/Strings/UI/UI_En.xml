@@ -11,4 +11,13 @@
   <string key="Volume">Volume</string>
   <string key="MusicVolume">Music</string>
   <string key="SoundVolume">Sound</string>
+
+  <string key="Start">Start</string>
+  <string key="Quit">Quit</string>
+  <string key="Message">Infos</string>
+
+  <string key="GameOver">Game Over</string>
+  <string key="GameOverContent">You are dead!</string>
+  <string key="MainMenu">Main Menu</string>
+  <string key="PlayAgain">Play Again</string>
 </strings>

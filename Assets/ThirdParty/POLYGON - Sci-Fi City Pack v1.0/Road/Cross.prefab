@@ -144,15 +144,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5580062254427196124}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3cafb5dafcc0a24e912d8a76dc55504, type: 3}
+  m_Script: {fileID: 11500000, guid: 307d6338f62d6614cb990b5acd3ed4d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   width: 30
   height: 30
-  weight: 2
+  weight: 5
   forward: {fileID: 1565465504851942587}
   left: {fileID: 5302560638319502522}
   right: {fileID: 6943252370415219265}
+  crossOffset: 10
 --- !u!1 &6938287496888470599
 GameObject:
   m_ObjectHideFlags: 0

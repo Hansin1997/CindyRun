@@ -15,4 +15,9 @@
   <string key="Start">开始</string>
   <string key="Quit">退出</string>
   <string key="Message">信息</string>
+
+  <string key="GameOver">游戏结束</string>
+  <string key="GameOverContent">你摔死了！</string>
+  <string key="MainMenu">主菜单</string>
+  <string key="PlayAgain">重来</string>
 </strings>

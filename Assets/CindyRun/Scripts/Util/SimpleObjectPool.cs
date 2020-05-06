@@ -40,6 +40,7 @@ namespace CindyRun.Util
                 r.gameObject.transform.position = template.transform.position;
                 r.gameObject.transform.eulerAngles = template.transform.eulerAngles;
                 r.gameObject.transform.localScale = template.transform.localScale;
+                r.gameObject.transform.SetParent(transform, false);
                 r.gameObject.SetActive(true);
                 g.RemoveAt(0);
                 objects.Add(r);
