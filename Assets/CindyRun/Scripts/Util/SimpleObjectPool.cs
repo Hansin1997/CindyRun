@@ -32,6 +32,7 @@ namespace CindyRun.Util
                 T r = Object.Instantiate(template, transform);
                 templateMap[r] = template;
                 objects.Add(r);
+                r.gameObject.SetActive(true);
                 return r;
             }
             else

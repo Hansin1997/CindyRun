@@ -1,4 +1,5 @@
 <strings>
+  <string key="CindyRun">Cindy Run</string>
   <string key="Setting">设置</string>
   <string key="Language">语言</string>
   <string key="QualityLevel">画质等级</string>
@@ -14,10 +15,15 @@
 
   <string key="Start">开始</string>
   <string key="Quit">退出</string>
-  <string key="Message">信息</string>
+  <string key="About">关于</string>
+  <string key="AboutContent"><b><i>CindyRun</i></b>是一个免费开源跑酷游戏，它基于开源框架<b><i>Cindy</i></b>开发。
+ 
+<b>Github: </b><a href="https://github.com/Hansin1997/CindyRun">https://github.com/Hansin1997/CindyRun</a>
+  </string>
 
   <string key="GameOver">游戏结束</string>
   <string key="GameOverContent">你摔死了！</string>
   <string key="MainMenu">主菜单</string>
   <string key="PlayAgain">重来</string>
+  <string key="Revive">复活</string>
 </strings>

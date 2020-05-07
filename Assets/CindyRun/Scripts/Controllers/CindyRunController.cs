@@ -34,15 +34,24 @@ namespace CindyRun.Controllers
 
             isRoad.Value = true;
         }
+
+        public void ResetF()
+        {
+            if(F != null)
+            {
+                target.eulerAngles = new Vector3(target.eulerAngles.x, F.transform.eulerAngles.y, target.eulerAngles.z);
+                F = null;
+            }
+        }
         
 
         public override void OnControllerUpdate(float deltaTime)
         {
             RaycastHit[] hits = Physics.RaycastAll(target.position, Vector3.down);
-            PathNode node = null;
+            AbstractPathNode node = null;
             foreach (RaycastHit hit in hits)
             {
-                if ((node = hit.transform.GetComponentInParent<PathNode>()) != null)
+                if ((node = hit.transform.GetComponentInParent<AbstractPathNode>()) != null)
                 {
                     break;
                 }
@@ -75,7 +84,7 @@ namespace CindyRun.Controllers
                         }
                     }
                 }
-                else
+                else if(node is PathNode)
                 {
                     F = null;
                     target.eulerAngles = new Vector3(target.eulerAngles.x, node.transform.eulerAngles.y, target.eulerAngles.z);

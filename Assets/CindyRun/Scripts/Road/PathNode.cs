@@ -1,11 +1,7 @@
-﻿using UnityEngine;
-
+﻿
 namespace CindyRun.Road
 {
-    public class PathNode : MonoBehaviour
+    public class PathNode : AbstractPathNode
     {
-        public float width = 1;
-        public float height = 1;
-        public float weight = 1;
     }
 }

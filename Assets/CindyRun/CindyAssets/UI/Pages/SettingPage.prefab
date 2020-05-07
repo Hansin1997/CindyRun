@@ -642,7 +642,7 @@ MonoBehaviour:
   dataSource: {fileID: 3445288124842324217}
   options:
     bindOnStart: 1
-    bindOnUpdate: 1
+    bindOnUpdate: 0
   slider: {fileID: 3445288125058344165}
   minValue:
     key:
@@ -782,7 +782,7 @@ MonoBehaviour:
   dataSource: {fileID: 3445288124842324217}
   options:
     bindOnStart: 1
-    bindOnUpdate: 1
+    bindOnUpdate: 0
   slider: {fileID: 3445288125177086025}
   minValue:
     key:
@@ -1645,7 +1645,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11466182, guid: d2c67c9f8ecea45ad946dc423474b514, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11466182, guid: d2c67c9f8ecea45ad946dc423474b514, type: 3}
       propertyPath: m_MaxValue
@@ -2029,7 +2029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11466182, guid: d2c67c9f8ecea45ad946dc423474b514, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11466182, guid: d2c67c9f8ecea45ad946dc423474b514, type: 3}
       propertyPath: m_MaxValue

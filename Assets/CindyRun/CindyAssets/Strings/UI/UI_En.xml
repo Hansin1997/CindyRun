@@ -1,4 +1,5 @@
 <strings>
+  <string key="CindyRun">Cindy Run</string>
   <string key="Setting">Setting</string>
   <string key="Language">Language</string>
   <string key="QualityLevel">Quality Level</string>
@@ -14,10 +15,16 @@
 
   <string key="Start">Start</string>
   <string key="Quit">Quit</string>
-  <string key="Message">Infos</string>
+  <string key="About">About</string>
+  <string key="AboutContent"><b><i>CindyRun</i></b> is a free open source Parkour game, development based on <b><i>Cindy</i></b> framework.
+ 
+<b>Github: </b><a href="https://github.com/Hansin1997/CindyRun">https://github.com/Hansin1997/CindyRun</a>
+  </string>
+
 
   <string key="GameOver">Game Over</string>
   <string key="GameOverContent">You are dead!</string>
   <string key="MainMenu">Main Menu</string>
   <string key="PlayAgain">Play Again</string>
+  <string key="Revive">Revive</string>
 </strings>

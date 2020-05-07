@@ -2,7 +2,7 @@
 
 namespace CindyRun.Road
 {
-    public class EndOfRoad : PathNode
+    public class EndOfRoad : AbstractPathNode
     {
 
     }

@@ -1283,7 +1283,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1142108087072642, guid: c1dd2b331f731e04db3762054550978c, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Sidewalk_Corner_02_SF (1)
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 4607213361604426, guid: c1dd2b331f731e04db3762054550978c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1350,7 +1350,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1142108087072642, guid: c1dd2b331f731e04db3762054550978c, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Sidewalk_Corner_02_SF (2)
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 4607213361604426, guid: c1dd2b331f731e04db3762054550978c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1417,7 +1417,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1776786320129414, guid: 553d5ab60b93b904896a8af286bdbe32, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Sidewalk_Straight_01_SF (1)
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 4517893018949164, guid: 553d5ab60b93b904896a8af286bdbe32, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1554,7 +1554,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1776786320129414, guid: 553d5ab60b93b904896a8af286bdbe32, type: 3}
       propertyPath: m_Name
-      value: SM_Env_Sidewalk_Straight_01_SF (2)
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 4517893018949164, guid: 553d5ab60b93b904896a8af286bdbe32, type: 3}
       propertyPath: m_LocalPosition.x

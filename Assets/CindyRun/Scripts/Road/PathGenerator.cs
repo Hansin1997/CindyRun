@@ -18,16 +18,16 @@ namespace CindyRun.Road
 
         public ReferenceFloat distance;
 
-        public PathNode[] templates;
+        public AbstractPathNode[] templates;
         public bool allowMirrors = true;
-        public PathNode[] Objects;
+        public AbstractPathNode[] Objects;
         public AnimationCurve function = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
         public EndOfRoad[] endOfRoads;
 
-        protected IObjectPool<PathNode> pool;
+        protected IObjectPool<AbstractPathNode> pool;
 
-        public IList<PathNode> Nodes { get { return pool.GetActivedInstances(); } }
+        public IList<AbstractPathNode> Nodes { get { return pool.GetActivedInstances(); } }
 
         
         Vector3 o;
@@ -38,15 +38,15 @@ namespace CindyRun.Road
 
         public ReferenceFloat D;
 
-        protected PathNode RandomRoadNode { get { return RandomNode(templates); } }
+        protected AbstractPathNode RandomRoadNode { get { return RandomNode(templates); } }
 
-        protected EndOfRoad RandomEndOfRoad { get { return RandomNode(endOfRoads); } }
+        protected AbstractPathNode RandomEndOfRoad { get { return RandomNode(endOfRoads); } }
 
-        protected PathNode RandomObjects { get { return RandomNode(Objects); } }
+        protected AbstractPathNode RandomObjects { get { return RandomNode(Objects); } }
 
         public UnityEvent resetEvent;
 
-        protected T RandomNode<T>(T[] templates) where T : PathNode
+        protected T RandomNode<T>(T[] templates) where T : AbstractPathNode
         {
             float weightSum = 0;
             float[] map = new float[templates.Length];
@@ -67,24 +67,51 @@ namespace CindyRun.Road
 
         private void Awake()
         {
-            pool = new SimpleObjectPool<PathNode>();
+            pool = new SimpleObjectPool<AbstractPathNode>();
             targetOrigin = new SerializedTransform(target);
         }
 
         public void DoReset()
         {
-            List<PathNode> tmp = new List<PathNode>();
-            foreach(PathNode pathNode in Nodes)
+            List<AbstractPathNode> tmp = new List<AbstractPathNode>();
+            foreach(AbstractPathNode pathNode in Nodes)
             {
                 tmp.Add(pathNode);
             }
-            foreach (PathNode node in tmp)
+            foreach (AbstractPathNode node in tmp)
                 pool.Recycle(node);
             o = Vector3.zero;
             way = Way.Forward;
             targetOrigin.SetTransform(target);
             D.Value = 0;
             resetEvent.Invoke();
+        }
+
+        public void ResetTarget(float distance)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(target.position + Vector3.up * 10, Vector3.down);
+            foreach(RaycastHit hit in hits)
+            {
+                AbstractPathNode a;
+
+                if ((a = hit.collider.gameObject.GetComponentInParent<AbstractPathNode>()) != null)
+                {
+                    if (a is PathObject)
+                        continue;
+                    target.position = a.gameObject.transform.position;
+                    break;
+                }
+            }
+            List<AbstractPathNode> tatgets = new List<AbstractPathNode>();
+            foreach(AbstractPathNode node in Nodes)
+            {
+                if(node is PathObject && (node.gameObject.transform.position - target.position).magnitude <= distance)
+                {
+                    tatgets.Add(node);
+                }
+            }
+            foreach (AbstractPathNode t in tatgets)
+                pool.Recycle(t);
         }
 
         public void Generate(int count)
@@ -126,12 +153,12 @@ namespace CindyRun.Road
                                 break;
                         }
                     }
-                    if (!(Nodes[i] is EndOfRoad))
+                    if (Nodes[i] is PathNode)
                         break;
                 }
             }
             int count = 0;
-            PathNode t = RandomRoadNode;
+            AbstractPathNode t = RandomRoadNode;
             while (fork && t is ForkNode)
             {
                 t = RandomRoadNode;
@@ -143,8 +170,8 @@ namespace CindyRun.Road
                 }
             }
 
-            PathNode node = pool.Instantiate(t, transform);
-            if (allowMirrors && Random.Range(0f, 1f) >= 0.5f && !(node is ForkNode))
+            AbstractPathNode node = pool.Instantiate(t, transform);
+            if (allowMirrors && Random.Range(0f, 1f) >= 0.5f && (node is PathNode))
                 node.transform.localScale = new Vector3(-node.transform.localScale.x, node.transform.localScale.y, node.transform.localScale.z);
             D.Value += node.height;
             switch (way)
@@ -170,15 +197,19 @@ namespace CindyRun.Road
                     o += new Vector3(node.height / 2, 0, 0);
                     break;
             }
-            if(!(node is ForkNode || node is EndOfRoad))
+            if(node is PathNode)
             {
                 int len = (int)function.Evaluate(D.Value);
                 float unit = node.height / len;
                 for (int i = 0; i < len; i++)
                 {
-                    PathNode ins = pool.Instantiate(RandomObjects, node.transform);
+                    AbstractPathNode temp = RandomObjects;
+
+                    Renderer renderer = temp.GetComponent<Renderer>();
+                    float width = renderer == null ? temp.width : renderer.bounds.max.x - renderer.bounds.min.x;
+                    AbstractPathNode ins = pool.Instantiate(temp, node.transform);
                     ins.transform.position += node.transform.forward * (-node.height / 2 + i * unit) +
-                        node.transform.right * (-node.width / 2 + Random.Range(0, node.width));
+                        node.transform.right * (-node.width / 2 + Random.Range(width, node.width - width));
                     ins.transform.SetParent(transform);
                 }
             }
@@ -188,28 +219,28 @@ namespace CindyRun.Road
         {
             if (forward)
             {
-                PathNode e = RandomEndOfRoad;
+                AbstractPathNode e = RandomEndOfRoad;
                 if (e == null || parent.forward == null)
                     return;
-                PathNode instance = pool.Instantiate(e, parent.forward);
+                AbstractPathNode instance = pool.Instantiate(e, parent.forward);
                 instance.transform.position += instance.transform.forward * instance.height / 2;
                 instance.transform.SetParent(transform,true);
             }
             if (left)
             {
-                PathNode e = RandomEndOfRoad;
+                AbstractPathNode e = RandomEndOfRoad;
                 if (e == null || parent.left == null)
                     return;
-                PathNode instance = pool.Instantiate(e, parent.left);
+                AbstractPathNode instance = pool.Instantiate(e, parent.left);
                 instance.transform.position += instance.transform.forward * instance.height / 2;
                 instance.transform.SetParent(transform, true);
             }
             if (right)
             {
-                PathNode e = RandomEndOfRoad;
+                AbstractPathNode e = RandomEndOfRoad;
                 if (e == null || parent.right == null)
                     return;
-                PathNode instance = pool.Instantiate(e, parent.right);
+                AbstractPathNode instance = pool.Instantiate(e, parent.right);
                 instance.transform.position += instance.transform.forward * instance.height / 2;
                 instance.transform.SetParent(transform, true);
             }
@@ -231,7 +262,7 @@ namespace CindyRun.Road
 
         private void Update()
         {
-            List<PathNode> garbage = new List<PathNode>();
+            List<AbstractPathNode> garbage = new List<AbstractPathNode>();
             for (int i = 0; i < Nodes.Count; i++)
             {
                 if ((Nodes[i].transform.position - target.transform.position).magnitude > distance.value)
@@ -239,7 +270,7 @@ namespace CindyRun.Road
                 else
                     break;
             }
-            foreach (PathNode g in garbage)
+            foreach (AbstractPathNode g in garbage)
                 pool.Recycle(g);
             int c = 0;
             while (Nodes.Count == 0 || (target.transform.position - Nodes[Nodes.Count - 1].transform.position).magnitude <= distance.Value)
